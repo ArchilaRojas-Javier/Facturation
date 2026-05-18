@@ -4,13 +4,12 @@ namespace App\Form;
 
 use App\Entity\Invoice;
 use App\Entity\Client;
-use App\Entity\InvoiceItem;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Repository\ClientRepository;
-use App\Repository\InvoiceItemRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
@@ -45,11 +44,19 @@ class InvoiceType extends AbstractType
                 'allow_delete' => true,
                 'by_reference' => false,
                 'label' => false,
-            ]);
+            ])
            
+            ->add('saveDraft', SubmitType::class, [
             
+                'attr' => ['class' => 'btn btn-secondary bg-gray-500 text-white h-10 p-2 rounded-md']
+            ])
+            
+            ->add('register', SubmitType::class, [
+            
+            'attr' => ['class' => 'btn btn-primary bg-blue-500 text-white h-10 p-2 rounded-md']
+        ]);
            
-            ;
+        ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
