@@ -13,6 +13,10 @@ use App\Form\ProductType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\UX\LiveComponent\Attribute\LiveListener;
+use Symfony\UX\LiveComponent\LiveComponentTrait;
+use Symfony\UX\LiveComponent\ComponentToolsTrait;
+
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 
@@ -21,11 +25,23 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[AsLiveComponent]    
 final class NewProduct
 {
+    // use LiveComponentTrait;
     use DefaultActionTrait;
     use ComponentWithFormTrait;
+    use ComponentToolsTrait;
 
     #[LiveProp(writable: true, fieldName: 'productForm')]
     public ?Product $product = null;
+
+    #[LiveProp(writable: true)]
+    public bool $showList = true; 
+
+    #[LiveAction]
+    public function cancelCreation(): void
+    {
+    // Emite un evento hacia el componente padre (si existe)
+        $this->emitUp('toggleProductForm');
+    }
 
     public function __construct(
         private ProductRepository $productRepository,

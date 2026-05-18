@@ -1,5 +1,15 @@
 <div{{attributes}}>
 	<!-- component HTML -->
+	<div>
+		{# Renderiza el componente solo si la propiedad es true #}
+    {% if this.showProductForm %}
+        <div class="mt-4 p-4 border rounded bg-gray-50">
+            <h3>Crear nuevo producto</h3>
+            <twig:NewProduct :showList="false" />
+            
+        </div>
+    {% endif %}
+	</div>
 	
    <div class=''>
 		{{ form_start(this.formView, {
@@ -10,5 +20,16 @@
 		{{ include('invoice/_form.html.twig', { form: this.formView, button_label: 'Enregistrer' }) }}
 		{{ form_end(this.formView) }}
 	</div>
+
+	    {# Botón para mostrar/ocultar el formulario de producto #}
+    <button type="button"
+            data-action="live#action"
+            data-live-action-param="toggleProductForm"
+            class="btn btn-secondary">
+        + Nuevo producto
+    </button>
+
+
+</div>
 </div>
 		    

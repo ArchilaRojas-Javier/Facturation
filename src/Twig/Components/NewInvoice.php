@@ -4,7 +4,6 @@ namespace App\Twig\Components;
 
 use App\Entity\InvoiceItem;
 use App\Repository\InvoiceRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
@@ -16,6 +15,7 @@ use App\Form\InvoiceType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\UX\LiveComponent\Attribute\LiveListener;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 
@@ -74,6 +74,21 @@ final class NewInvoice
     public function getAllInvoices(): array
     {
         return $this->invoiceRepository->findby(['user' => $this->security->getUser()]);
+    }
+
+        #[LiveProp(writable: true)]
+    public bool $showProductForm = false;
+
+    #[LiveAction]
+    public function toggleProductForm(): void
+    {
+        $this->showProductForm = !$this->showProductForm;
+    }
+
+    #[LiveListener('toggleProductForm')]
+    public function onProductCreationCancelled(): void
+    {
+        $this->showProductForm = false;
     }
 }
 
