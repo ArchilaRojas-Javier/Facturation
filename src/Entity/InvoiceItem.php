@@ -3,9 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\InvoiceItemRepository;
-use BcMath\Number;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -23,19 +20,13 @@ class InvoiceItem
     #[ORM\ManyToOne(targetEntity: Invoice::class, inversedBy: 'invoiceItems')]
     private ?Invoice $invoice = null;
 
-    /**
-     * @var Collection<int, Product>
-     */
-    #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'invoiceItem')]
-    private Collection $product;
+    // Nueva relación ManyToOne hacia Product
+    #[ORM\ManyToOne(targetEntity: Product::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Product $product = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?float $productPrice = null;
-
-    public function __construct()
-    {
-        $this->product = new ArrayCollection();
-    }
+    #[ORM\Column(type: 'float', nullable: true)]
+    private ?float $unitPrice = null;
 
     public function getId(): ?int
     {
@@ -50,7 +41,6 @@ class InvoiceItem
     public function setQuantity(int $quantity): static
     {
         $this->quantity = $quantity;
-
         return $this;
     }
 
@@ -62,49 +52,28 @@ class InvoiceItem
     public function setInvoice(?Invoice $invoice): static
     {
         $this->invoice = $invoice;
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, Product>
-     */
-    public function getProduct(): Collection
+    public function getProduct(): ?Product
     {
         return $this->product;
     }
 
-    public function addProduct(Product $product): static
+    public function setProduct(?Product $product): static
     {
-        if (!$this->product->contains($product)) {
-            $this->product->add($product);
-            $product->setInvoiceItem($this);
-        }
-
+        $this->product = $product;
         return $this;
     }
 
-    public function removeProduct(Product $product): static
+    public function getUnitPrice(): ?float
     {
-        if ($this->product->removeElement($product)) {
-            // set the owning side to null (unless already changed)
-            if ($product->getInvoiceItem() === $this) {
-                $product->setInvoiceItem(null);
-            }
-        }
-
-        return $this;
+        return $this->unitPrice;
     }
 
-    public function getProductPrice(): ?float
+    public function setUnitPrice(?float $unitPrice): static
     {
-        return $this->productPrice;
-    }
-
-    public function setProductPrice(?float $productPrice): static
-    {
-        $this->productPrice = $productPrice;
-
+        $this->unitPrice = $unitPrice;
         return $this;
     }
 }

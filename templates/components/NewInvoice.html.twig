@@ -1,120 +1,131 @@
-<div{{attributes}}>
-	<!-- component HTML -->
-	<div>
-		{# Renderiza el componente solo si la propiedad es true #}
-    {% if this.showProductForm %}
-        <div class="mt-4 p-4 border rounded bg-gray-50">
-            
-            <twig:NewProduct :showList="false" />
-            
-        </div>
-    {% endif %}
-	</div>
-	    {# Botón para mostrar/ocultar el formulario de producto #}
-    <button type="button"
-            data-action="live#action"
-            data-live-action-param="toggleProductForm"
-            class="btn btn-secondary">
-        + Nuevo producto
-    </button>
-	
-
-<div class='flex flex-col gap-4'>
-<div class='flex flex-col gap-2 bg-white p-6 rounded-md shadow-sm '>
-	<h2 class=' text-2xl font-bold text-black'>{{ form_title|default('Informations générales') }}</h2>
-	<p class='text-gray-500'>{{ form_label|default('') }}</p>
-	{{ form_start(form) }}
-		<div class='flex w-full gap-2'>
-
-			<div class='flex flex-col w-1/2 '>
-				{{ form_label(form.client) }}
-				{{ form_widget(form.client, {attr: {class: ' w-full h-10 mb-2 p-2 border rounded-md border-gray-200 rounded-md'}}) }}
-				{{ form_errors(form.client) }}
-			</div>
-
-			<div class='flex mt-6 w-auto h-10 px-4 border rounded-md border-gray-200 items-center justify-center'>
-				<a href="{{ path('app_client_new') }}" class="  text-blue-500 hover:text-blue-700">
-					{{ ux_icon('lucide:plus') }}
-				</a>
-			</div>
-
-			<div class='flex flex-col w-1/2'>
-				<p class="text-gray-600">Date de la facture: </p>
-                <p class="w-full h-10 mb-2 p-2 border rounded-md border-gray-200">{{ invoice.createdAt|date("d/m/Y") }}</p>
-            </div>
-		</div>
-	</div>
-</div>
----------Buttons------------
-<div class='flex gap-4 mt-6 mb-6 justify-end'>
-	<button class="btn bg-white text-black border border-gray-200 h-10 p-2 rounded-md">
-		<a href="{{ path('app_invoice_index') }}">Annuler</a>
-	</button>
-	<button type="submit" class="btn btn bg-blue-500 text-white h-10 p-2 rounded-md">
-		{{ button_label|default('Enregistrer') }}
-	</button>
-</div>
-----------------------------------
-
-<div class='flex flex-col gap-2 bg-white p-6 rounded-md shadow-sm'>
+<div{{ attributes }}>
+    <!-- Modal para crear nuevo producto -->
     <div>
-        <h2 class='border-b-2 border-black text-2xl font-bold text-black'>Lignes de la facture</h2>
-    </div> 
+        {% if this.showProductForm %}
+            <div>
+                <twig:NewProduct :showList="false" />
+            </div>
+        {% endif %}
+    </div>
+
+    {{ form_start(form) }}
+
     
-	{# <div class="border border-gray-200 rounded-md py-4 bg-white shadow-sm w-full overflow-x-auto">
-		<table class="table-auto w-full">
-			<thead class='border-b border-gray-200'>
-				<tr>
-					<th class='px-4 py-2 text-left'>Nom</th>
-					<th class='px-4 py-2 text-left'>Description</th>
-					<th class='px-4 py-2 text-left'>Prix unitaire</th>
-					<th class='px-4 py-2 text-left'>Actions</th>
-				</tr>
-			</thead>
-			<tbody>
-				{% for product in this.getAllProducts() %}
-					<tr>
-						<td class='px-4 py-2 align-middle'>producto name</td>
-						<td class='px-4 py-2 align-middle'> product.description </td>
-						<td class='px-4 py-2 align-middle'> product.price €/ product.unit.value </td>
+    <div class='flex flex-col gap-4'>
+        <div class='flex flex-col gap-2 bg-white p-6 rounded-md shadow-sm'>
+            <h2 class='text-2xl font-bold text-black'>{{ form_title|default('Informations générales') }}</h2>
+            <p class='text-gray-500'>{{ form_label|default('') }}</p>
+            <div class='flex w-full gap-2'>
+                <div class='flex flex-col w-1/2'>
+                    {{ form_label(form.client) }}
+                    {{ form_widget(form.client, {attr: {class: 'w-full h-10 mb-2 p-2 border rounded-md'}}) }}
+                    {{ form_errors(form.client) }}
+                </div>
+                <div class='flex mt-6 w-auto h-10 px-4 border rounded-md items-center justify-center'>
+                    <a href="{{ path('app_client_new') }}" class="text-blue-500 hover:text-blue-700">
+                        {{ ux_icon('lucide:plus') }}
+                    </a>
+                </div>
+                <div class='flex flex-col w-1/2'>
+                    <p class="text-gray-600">Date de la facture:</p>
+                    <p class="w-full h-10 mb-2 p-2 border rounded-md">{{ invoice.createdAt|date("d/m/Y") }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-						<td class='flex gap-4 px-4 mt-1 py-2 align-middle whitespace-nowrap'>
-							<a href="{{ path('app_product_edit', {'id': product.id}) }}"
-							 class="text-blue-500 mt-1 hover:text-blue-700">{{ ux_icon('lucide:edit-2') }}</a>
-							<form method="post" action="{{ path('app_product_delete', {'id': product.id}) }}">
-                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">
-                                <button class="btn text-red-500 hover:text-red-700">{{ ux_icon('lucide:trash-2') }}</button>
-                            </form> 
-						</td>
-					</tr>
-				 {% else %}
-					<tr>
-						<td colspan="4">no records found</td>
-					</tr>
-				{% endfor %}
-			</tbody>
-		</table>
-	</div> #}
+    
+    <div class='flex flex-col gap-2 bg-white p-6 rounded-md shadow-sm'>
+        <h2 class=' text-2xl font-bold text-black'>Lignes de la facture</h2>
 
-{{ form_end(form) }}
-	
+		<div class="py-4 w-full">
+            <table class="table-auto w-full">
+                <thead class='border-b-2 border-black'>
+                    <tr>
+                        <th class='px-4 py-2 text-left'>Produit/Service</th>
+                        <th class='px-4 py-2 text-left'>Qté</th>
+                        <th class='px-4 py-2 text-left'>Prix unitaire</th>
+                        <th class='px-4 py-2 text-left'>Total</th>
+                        <th class='px-4 py-2 text-left'></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for key, item in this.tempInvoiceItems %}
+					key = {{ key }} 
+                        <tr>
+                            <td class='px-4 py-2'>{{ item.productName }}</td>
+                            <td class='px-4 py-2'>{{ item.quantity }}</td>
+                            <td class='px-4 py-2'>{{ item.unitPrice }} €</td>
+                            <td class='px-4 py-2'>{{ item.quantity * item.unitPrice }} €</td>
+                            <td class='px-4 py-2'>
+                                 <button type="button"
+									data-action="live#action"
+									data-live-action-param="removeTempInvoiceItem"
+									data-live-key-param="{{ key }}"
+									class="text-red-500 hover:text-red-700">
+									{{ ux_icon('lucide:trash-2') }}	
+								</button>
+							</td>
+						</tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center py-4">Aucune ligne pour le moment</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
+        
+        <div class="shadow-2xs rounded-md bg-gray-100 mt-4 p-4">
+            <h3 class="font-semibold ">Sélectionner un produit</h3>
+            <div class="flex gap-2 items-end">
+                <div class="flex-1">
+                    <select data-model="selectedProductId" class="w-full border rounded p-2">
+                        <option value="">-- Choisir un produit --</option>
+                        {% for product in this.getAllProducts() %}
+                            <option value="{{ product.id }}">{{ product.name }} - {{ product.price }}€/{{product.unit.value}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="w-24">
+                    <label class="block text-sm font-medium">Quantité</label>
+                    <input type="number" data-model="quantity" value="1" min="1" class="w-full border rounded p-2">
+                </div>
+                <div>
+				<button type="button"
+                        data-action="live#action"
+                        data-live-action-param="addProductToInvoice"
+                        class="bg-green-500 text-white px-4 py-2 rounded">
+                    Ajouter
+                </button>
+				</div>
+				<button type="button"
+            		data-action="live#action"
+            		data-live-action-param="toggleProductForm"
+            		class="flex btn bg-blue-500 text-white h-10 p-2 rounded-md mt-4">
+        			 Nouveau produit
+    			</button>
+            </div>
+        </div>
+			<div class="flex justify-end mt-4 bold text-xl text-black ">
+				
+				<h2>Total (TTC): {{ this.total|number_format(2, ',', ' ') }} €</h2>
+			</div>
 
+        
+        
+        <div class='flex gap-4 mt-6 mb-6 justify-end'>
+            <a href="{{ path('app_invoice_index') }}" class="btn bg-white text-black border border-gray-200 h-10 p-2 rounded-md inline-flex items-center">
+                Annuler
+            </a>
+            <button type="submit" class="btn bg-blue-500 text-white h-10 p-2 rounded-md">
+                {{ button_label|default('Enregistrer') }}
+            </button>
+        </div>
+    </div>
 
+    {{ form_end(form) }}
 
-
-   {# <div class=''>
-		{{ form_start(this.formView, {
-			attr: { 'data-action': 'live#action:prevent',
-					'data-live-action-param': 'saveInvoice'
-				} }) 
-        }}
-		{{ include('invoice/_form.html.twig', { form: this.formView, button_label: 'Enregistrer' }) }}
-		{{ form_end(this.formView) }}
-	</div> #}
-
-
-
+    
 </div>
-</div>
-		    
