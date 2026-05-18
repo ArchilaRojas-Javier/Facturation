@@ -13,42 +13,39 @@ use App\Form\ProductType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\UX\LiveComponent\Attribute\LiveListener;
-use Symfony\UX\LiveComponent\LiveComponentTrait;
-use Symfony\UX\LiveComponent\ComponentToolsTrait;
-
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\UX\LiveComponent\LiveResponder;
+
 
 
 #[IsGranted('ROLE_USER')]
 
-#[AsLiveComponent]    
+#[AsLiveComponent]
 final class NewProduct
 {
-    // use LiveComponentTrait;
     use DefaultActionTrait;
     use ComponentWithFormTrait;
-    use ComponentToolsTrait;
+    
+
 
     #[LiveProp(writable: true, fieldName: 'productForm')]
     public ?Product $product = null;
 
     #[LiveProp(writable: true)]
-    public bool $showList = true; 
+    public bool $showList = true;
 
-    #[LiveAction]
-    public function cancelCreation(): void
-    {
-    // Emite un evento hacia el componente padre (si existe)
-        $this->emitUp('toggleProductForm');
-    }
+    private LiveResponder $liveResponder;
+
 
     public function __construct(
         private ProductRepository $productRepository,
         private EntityManagerInterface $entityManagerInterface,
         private FormFactoryInterface $formFactoryInterface,
-        private Security $security
-    ) {}
+        private Security $security,
+        LiveResponder $liveResponder
+    ) {
+        $this->liveResponder = $liveResponder;
+    }
 
     protected function instantiateForm(): \Symfony\Component\Form\FormInterface
     {
@@ -73,7 +70,14 @@ final class NewProduct
 
             $this->product = new Product();
             $this->resetForm();
+            $this->liveResponder->emitUp('toggleProductForm');
         }
+    }
+    #[LiveAction]
+    public function cancelCreation(): void
+    {
+
+        $this->liveResponder->emitUp('toggleProductForm');
     }
     public function getAllProducts(): array
     {
