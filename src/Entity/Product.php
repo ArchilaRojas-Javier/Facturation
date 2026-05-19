@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Enums\UnitsEnum;
 use App\Repository\ProductRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
@@ -23,14 +25,20 @@ class Product
     #[ORM\Column]
     private ?float $price = null;
 
-    #[ORM\ManyToOne(inversedBy: 'product')]
-    private ?InvoiceItem $invoiceItem = null;
+    
+    #[ORM\OneToMany(targetEntity: InvoiceItem::class, mappedBy: 'product')]
+    private Collection $invoiceItems;
 
     #[ORM\Column(enumType: UnitsEnum::class)]
     private ?UnitsEnum $unit = null;
 
     #[ORM\ManyToOne(inversedBy: 'product')]
     private ?User $user = null;
+
+    public function __construct()
+    {
+        $this->invoiceItems = new ArrayCollection(); 
+    }
 
     public function getId(): ?int
     {
@@ -45,7 +53,6 @@ class Product
     public function setName(string $name): static
     {
         $this->name = $name;
-
         return $this;
     }
 
@@ -57,7 +64,6 @@ class Product
     public function setDescription(string $description): static
     {
         $this->description = $description;
-
         return $this;
     }
 
@@ -69,19 +75,33 @@ class Product
     public function setPrice(float $price): static
     {
         $this->price = $price;
-
         return $this;
     }
 
-    public function getInvoiceItem(): ?InvoiceItem
+    /**
+     * @return Collection<int, InvoiceItem>
+     */
+    public function getInvoiceItems(): Collection
     {
-        return $this->invoiceItem;
+        return $this->invoiceItems;
     }
 
-    public function setInvoiceItem(?InvoiceItem $invoiceItem): static
+    public function addInvoiceItem(InvoiceItem $invoiceItem): static
     {
-        $this->invoiceItem = $invoiceItem;
+        if (!$this->invoiceItems->contains($invoiceItem)) {
+            $this->invoiceItems->add($invoiceItem);
+            $invoiceItem->setProduct($this);
+        }
+        return $this;
+    }
 
+    public function removeInvoiceItem(InvoiceItem $invoiceItem): static
+    {
+        if ($this->invoiceItems->removeElement($invoiceItem)) {
+            if ($invoiceItem->getProduct() === $this) {
+                $invoiceItem->setProduct(null);
+            }
+        }
         return $this;
     }
 
@@ -93,7 +113,6 @@ class Product
     public function setUnit(UnitsEnum $unit): static
     {
         $this->unit = $unit;
-
         return $this;
     }
 
@@ -105,7 +124,6 @@ class Product
     public function setUser(?User $user): static
     {
         $this->user = $user;
-
         return $this;
     }
 }

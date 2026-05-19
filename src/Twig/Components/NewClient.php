@@ -3,7 +3,6 @@
 namespace App\Twig\Components;
 
 use App\Repository\ClientRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
@@ -12,9 +11,15 @@ use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use App\Entity\Client;
 use App\Form\ClientType;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+
+
+#[IsGranted('ROLE_USER')]
 
 #[AsLiveComponent]
-final class NewClient extends AbstractController
+final class NewClient
 {
     use DefaultActionTrait;
     use ComponentWithFormTrait;
@@ -24,20 +29,22 @@ final class NewClient extends AbstractController
 
     public function __construct(
         private ClientRepository $clientRepository,
-        private EntityManagerInterface $entityManagerInterface
+        private EntityManagerInterface $entityManagerInterface,
+        private FormFactoryInterface $formFactoryInterface,
+        private Security $security
     ) {}
 
     protected function instantiateForm(): \Symfony\Component\Form\FormInterface
     {
         $client = $this->client ?? new Client();
-        return $this->createForm(ClientType::class, $client);
+        return $this->formFactoryInterface->create(ClientType::class, $client);
     }
 
     #[LiveAction]
     public function saveClient(): void
     {
         $this->submitForm();
-        $user = $this->getUser();
+        $user = $this->security->getUser();
         $form = $this->getForm();
         if ($form->isValid()) {
             /** @var Client $client */
@@ -52,6 +59,6 @@ final class NewClient extends AbstractController
     }
     public function getAllClients(): array
     {
-        return $this->clientRepository->findby(['user' => $this->getUser()]);
+        return $this->clientRepository->findby(['user' => $this->security->getUser()]);
     }
 }

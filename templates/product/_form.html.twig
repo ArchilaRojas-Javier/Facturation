@@ -24,9 +24,19 @@
     </div>
     
     <div class='flex gap-4 mt-6 justify-end'>
+        {% if showList %}
         <button class="btn bg-white text-black border border-gray-200 h-10 p-2 rounded-md">
             <a href="{{ path('app_product_index') }}">Annuler</a>
         </button>
+        {% else %}
+        <button type="button"
+                    data-action="live#action"
+                    data-live-action-param="cancelCreation"
+                    class="mt-2 text-sm text-red-500">
+                Cancelar
+        </button>
+       
+        {% endif %}
         <button  type="submit" class="btn btn bg-blue-500 text-white h-10 p-2 rounded-md">
             {{ button_label|default('Enregistrer') }}
         </button>

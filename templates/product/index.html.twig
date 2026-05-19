@@ -33,8 +33,9 @@
                                 <td class='px-4 py-2 align-middle'>{{ product.description }}</td>
                                 <td class='px-4 py-2 align-middle'>{{ product.price }}€/{{ product.unit.value }}</td>
                                 
-                                <td class='flex gap-4 px-4 py-2 align-middle whitespace-nowrap'>
-                                    <a href="{{ path('app_product_edit', {'id': product.id}) }}" class="text-blue-500 hover:text-blue-700">{{ ux_icon('lucide:edit-2') }}</a>
+                                <td class='flex gap-4 mt-1 px-4 py-2 align-middle whitespace-nowrap'>
+                                    <a href="{{ path('app_product_edit', {'id': product.id}) }}"
+                                     class="text-blue-500 mt-1 hover:text-blue-700">{{ ux_icon('lucide:edit-2') }}</a>
                                     
                                     <form method="post" action="{{ path('app_product_delete', {'id': product.id}) }}">
                                     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">

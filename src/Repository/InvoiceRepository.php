@@ -16,6 +16,32 @@ class InvoiceRepository extends ServiceEntityRepository
         parent::__construct($registry, Invoice::class);
     }
 
+    // src/Repository/InvoiceRepository.php
+    public function getNextInvoiceNumber(\DateTimeInterface $date): string
+    {
+        $datePrefix = $date->format('Ymd');
+        $pattern = 'FACT-' . $datePrefix . '-%';
+
+        $maxNumber = $this->createQueryBuilder('i')
+            ->select('MAX(i.number)')
+            ->where('i.number LIKE :pattern')
+            ->setParameter('pattern', $pattern)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        if ($maxNumber) {
+            
+            $parts = explode('-', $maxNumber);
+            $lastNumber = (int) end($parts);
+            $nextNumber = $lastNumber + 1;
+        } else {
+            $nextNumber = 1;
+        }
+
+        
+        return sprintf('FACT-%s-%s', $datePrefix, str_pad((string)$nextNumber, 3, '0', STR_PAD_LEFT));
+    }
+
 //    /**
 //     * @return Invoice[] Returns an array of Invoice objects
 //     */
