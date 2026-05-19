@@ -38,8 +38,13 @@ final class InvoiceController extends AbstractController
     #[Route('/{id}', name: 'app_invoice_show', methods: ['GET'])]
     public function show(Invoice $invoice): Response
     {
+        $user = $this->getUser();
+        
+        $invoice->getInvoiceItems()->slice(0); 
+        
         return $this->render('invoice/show.html.twig', [
             'invoice' => $invoice,
+            'user'=> $user,
         ]);
     }
 

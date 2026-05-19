@@ -58,13 +58,8 @@
                                         class="text-blue-500 hover:text-blue-700 transition">
                                             {{ ux_icon('lucide:edit-2', {height: 18, width: 18}) }}
                                         </a>
-                                        <form method="post" action="{{ path('app_invoice_delete', {'id': invoice.id}) }}"
-                                            onsubmit="return confirm('¿Estás seguro?')">
-                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ invoice.id) }}">
-                                            <button class="text-red-500 hover:text-red-700 transition">
-                                                {{ ux_icon('lucide:trash-2', {height: 18, width: 18}) }}
-                                            </button>
-                                        </form>
+				                        {{ include('invoice/_delete_form.html.twig') }}
+                                        
                                     </div>
                                 </td>
                             </tr>
