@@ -46,12 +46,12 @@ class InvoiceType extends AbstractType
                 'label' => false,
             ])
            
-            ->add('saveDraft', SubmitType::class, [
+            ->add('brouillon', SubmitType::class, [
             
                 'attr' => ['class' => 'btn btn-secondary bg-gray-500 text-white h-10 p-2 rounded-md']
             ])
             
-            ->add('register', SubmitType::class, [
+            ->add('registre', SubmitType::class, [
             
             'attr' => ['class' => 'btn btn-primary bg-blue-500 text-white h-10 p-2 rounded-md']
         ]);

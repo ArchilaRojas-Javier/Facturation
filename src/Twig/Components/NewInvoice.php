@@ -21,7 +21,11 @@ use App\Repository\ProductRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Form\ClickableInterface;
+use Symfony\Component\Form\Form\SubmitButton;
+use Symfony\Component\Form;
+
+
 
 
 #[IsGranted('ROLE_USER')]
@@ -41,7 +45,7 @@ final class NewInvoice extends AbstractController
         private FormFactoryInterface $formFactoryInterface,
         private Security $security,
         private ProductRepository $productRepository,
-        private UrlGeneratorInterface $urlGenerator
+        
     ) {
         $this->invoice = new Invoice();
     }
@@ -57,7 +61,19 @@ final class NewInvoice extends AbstractController
     public int $quantity = 1;
 
     #[LiveAction]
-    public function saveInvoice(): mixed
+    public function saveAsDraft(): mixed
+    {
+        return $this->saveInvoiceWithStatus(StatusEnum::DRAFT);
+    }
+
+    #[LiveAction]
+    public function saveAsPending(): mixed
+    {
+        return $this->saveInvoiceWithStatus(StatusEnum::PENDINGPAYMENT);
+    }
+
+    #[LiveAction]
+    public function saveInvoiceWithstatus(StatusEnum $status): mixed
     {
         $total = $this->getTotal();
 
@@ -76,46 +92,29 @@ final class NewInvoice extends AbstractController
         $this->submitForm();
         $user = $this->security->getUser();
         $form = $this->getForm();
+        
         if ($form->isValid()) {
             /** @var Invoice $invoice */
             $invoice = $form->getData();
             $invoice->setUser($user);
             $invoice->setTotalTtc($total);
+            $invoice->setStatus($status);
 
             $issuedDate = new \DateTimeImmutable();
             $invoiceNumber = $this->invoiceRepository->getNextInvoiceNumber($issuedDate);
             $invoice->setNumber($invoiceNumber);
+                
+            $this->entityManagerInterface->persist($invoice);
+            $this->entityManagerInterface->flush();
 
-            // ¿Qué botón se ha pulsado?
-            $isDraft = $form->get('saveDraft');
-            $isRegister = $form->get('register');
+            
+            $this->invoice = new Invoice();
+            $this->tempInvoiceItems = [];
+            $this->resetForm();
 
-            if ($isDraft) {
-                // Guardar borrador sin importar si hay errores de validación
-                $invoice->setStatus(StatusEnum::DRAFT);
-                $this->entityManagerInterface->persist($invoice);
-                $this->entityManagerInterface->flush();
-
-                // Limpieza y redirección
-                $this->invoice = new Invoice();
-                $this->tempInvoiceItems = [];
-                $this->resetForm();
-                return $this->redirectToRoute('app_invoice_index', [], Response::HTTP_SEE_OTHER);
-            }
-            // Registro oficial → solo si el formulario es completamente válido
-            if ($form->isValid()) {
-                $invoice->setStatus(StatusEnum::PENDINGPAYMENT);
-                $this->entityManagerInterface->persist($invoice);
-                $this->entityManagerInterface->flush();
-
-                // Limpieza y redirección
-                $this->invoice = new Invoice();
-                $this->tempInvoiceItems = [];
-                $this->resetForm();
-                return $this->redirectToRoute('app_invoice_index', [], Response::HTTP_SEE_OTHER);
-            }
-
+            return $this->redirectToRoute('app_invoice_index', [], Response::HTTP_SEE_OTHER);
         }
+
         return null;
     }
     public function getAllInvoices(): array

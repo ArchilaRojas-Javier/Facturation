@@ -15,51 +15,69 @@
                 <a href="{{ path('app_invoice_new') }}"> + Ajouter une facture</a>
                 </button>
             </div>
-			<div class="border border-gray-200 rounded-md py-4 bg-white shadow-sm w-full overflow-x-auto"> 
+
+            <div class="border border-gray-200 rounded-md py-4 bg-white shadow-sm w-full overflow-x-auto">
                 <table class="table-auto w-full">
-                    <thead class='border-b border-gray-200'>
-                        <tr>
-                            <th>Numéro</th>
-                            <th>Date</th>
-                            <th>Client</th>
-                            <th>Total TTC</th>
-                            <th>Status</th>
-                            <th>actions</th>
+                    <thead class="border-b border-gray-200">
+                        <tr class="bg-gray-50">
+                            <th class="px-4 py-3 text-left text-sm font-semibold">Numéro</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold">Date</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold">Client</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold">Total TTC</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold">Status</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for invoice in invoices %}
-                            <tr>
-                                <td>{{ invoice.number }}</td>
-                                <td>{{ invoice.date ? invoice.date|date('Y-m-d') : '' }}</td>
-                                <td>{{ invoice.client.name }}</td>
-                                <td>{{ invoice.totalTtc }}</td>
-                                <td>{{ invoice.status }}</td>
+                            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                <td class="px-4 py-3 text-sm">{{ invoice.number }}</td>
+                                <td class="px-4 py-3 text-sm">{{ invoice.createdAt|date('d/m/Y') }}</td>
+                                <td class="px-4 py-3 text-sm">{{ invoice.client.name }}</td>
+                                <td class="px-4 py-3 text-sm">{{ invoice.totalTtc }}</td>
+                                {% set status = invoice.status.value %}
+                                {% set badgeClass = 
+                                    status == 'Draft' ? 'bg-gray-100 text-gray-800' :
+                                    status == 'pending_payment' ? 'bg-blue-100 text-blue-800' :
+                                    status == 'paid' ? 'bg-green-100 text-green-800' :
+                                    status == 'cancelled' ? 'bg-red-100 text-red-800' :
+                                    'bg-gray-100 text-gray-800'
+                                %}
+
                                 
-                                <td class='flex gap-4 px-4 mt-1 py-2 align-middle whitespace-nowrap'>
-
-                                    <a href="{{ path('app_invoice_show', {'id': invoice.id}) }}"
-                                    class="text-blue-500 mt-1 hover:text-blue-700">{{ ux_icon('lucide:eye') }}</a>
-
-                                    <a href="{{ path('app_invoice_edit', {'id': invoice.id}) }}"
-                                     class="text-blue-500 mt-1 hover:text-blue-700">{{ ux_icon('lucide:edit-2') }}</a>
-                                    
-                                    <form method="post" action="{{ path('app_invoice_delete', {'id': invoice.id}) }}">
-                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ invoice.id) }}">
-                                        <button class="btn text-red-500 hover:text-red-700">{{ ux_icon('lucide:trash-2') }}</button>
-                                    </form>
-                                    
+                                <td class="px-4 py-3 text-sm"><span class="px-2 py-1 text-xs font-medium rounded-full {{ badgeClass }}">
+                                    {{ status }}
+                                </span></td>
+                                <td class="px-4 py-3 text-sm">
+                                    <div class="flex items-center gap-3">
+                                        <a href="{{ path('app_invoice_show', {'id': invoice.id}) }}"
+                                        class="text-blue-500 hover:text-blue-700 transition">
+                                            {{ ux_icon('lucide:eye', {height: 18, width: 18}) }}
+                                        </a>
+                                        <a href="{{ path('app_invoice_edit', {'id': invoice.id}) }}"
+                                        class="text-blue-500 hover:text-blue-700 transition">
+                                            {{ ux_icon('lucide:edit-2', {height: 18, width: 18}) }}
+                                        </a>
+                                        <form method="post" action="{{ path('app_invoice_delete', {'id': invoice.id}) }}"
+                                            onsubmit="return confirm('¿Estás seguro?')">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ invoice.id) }}">
+                                            <button class="text-red-500 hover:text-red-700 transition">
+                                                {{ ux_icon('lucide:trash-2', {height: 18, width: 18}) }}
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         {% else %}
                             <tr>
-                                <td colspan="4">no records found</td>
+                                <td colspan="6" class="px-4 py-6 text-center text-gray-500">
+                                    Aucune facture trouvée
+                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
-
-	    </main>
+		</main>
     </section>
 {% endblock %}

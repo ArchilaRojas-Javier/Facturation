@@ -23,6 +23,7 @@ final class InvoiceController extends AbstractController
     {
         $user = $this->getUser();
         $invoices = $invoiceRepository->findBy(['user' => $user], ['created_at' => 'DESC']);
+        
         return $this->render('invoice/index.html.twig', [
             'invoices' => $invoices,
         ]);

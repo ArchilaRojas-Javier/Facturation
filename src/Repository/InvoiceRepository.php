@@ -23,8 +23,8 @@ class InvoiceRepository extends ServiceEntityRepository
         $pattern = 'FACT-' . $datePrefix . '-%';
 
         $maxNumber = $this->createQueryBuilder('i')
-            ->select('MAX(i.invoiceNumber)')
-            ->where('i.invoiceNumber LIKE :pattern')
+            ->select('MAX(i.number)')
+            ->where('i.number LIKE :pattern')
             ->setParameter('pattern', $pattern)
             ->getQuery()
             ->getSingleScalarResult();

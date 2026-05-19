@@ -109,14 +109,23 @@
             <a href="{{ path('app_invoice_index') }}" class="btn bg-white text-black border border-gray-200 h-10 p-2 rounded-md inline-flex items-center">
                 Annuler
             </a>
-            <button type="submit" class="btn btn-primary ">
-                {{ button_label|default('Enregistrer') }}
-                {{ form_widget(form.register) }}
+            
+            <button type="submit"
+                    name="brouillon"
+                    data-action="live#action"
+                    data-live-action-param="saveAsDraft"
+                    class="btn bg-gray-500 text-white h-10 p-2 rounded-md">
+                {{ form.brouillon.vars.label|default('Brouillon') }}
             </button>
-            <button type="submit" class="btn btn-secondary ">
-                {{ button_label|default('Brouillon') }}
-                {{ form_widget(form.saveDraft) }}
-            </button>
+
+            <button type="submit"
+                    name="registre"
+                    data-action="live#action"
+                    data-live-action-param="saveAsPending"
+                    class="btn bg-blue-500 text-white h-10 p-2 rounded-md">
+                {{ form.registre.vars.label|default('Enregistrer') }}
+            </button>                    
+                
         </div>
     </div>
 
