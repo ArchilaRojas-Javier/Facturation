@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Client
+{% endblock %}
+
+{% block body %}
+
+	<section class='flex w-full h-screen'>
+		<twig:AsideBar/>
+
+		<main class="flex flex-col w-full p-8 gap-6 text-gray-500">
+
+			<div class='flex max-w-full justify-between'>
+				<h1 class='text-2xl font-bold text-black'>Clients</h1>
+				<button class='btn bg-blue-500 text-white h-10 p-2 rounded-md'>
+					<a href="{{ path('app_client_new') }}">
+						+ Ajouter un client</a>
+				</button>
+			</div>
+			<div class="border border-gray-200 rounded-md py-4 bg-white shadow-sm w-full overflow-x-auto">
+				<table class="table-auto w-full">
+					<thead class='border-b border-gray-200'>
+						<tr>
+							<th class='px-4 py-2 text-left'>Nom</th>
+							<th class='px-4 py-2 text-left'>Contact</th>
+							<th class='px-4 py-2 text-left'>Adresse</th>
+							<th class='px-4 py-2 text-left'>Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for client in clients %}
+							<tr>
+								<td class='px-4 py-2 align-middle'>{{ client.name }}</td>
+								<td class='px-4 py-2 align-middle'>{{ client.email }}<span class="block">{{ client.phone }}</span></td>
+								<td class='px-4 py-2 align-middle'>{{ client.address }}</td>
+
+								<td class='flex gap-4 px-4 mt-2 py-2 align-middle whitespace-nowrap'>
+									<a href="{{ path('app_client_edit', {'id': client.id}) }}" 
+									class="text-blue-500 mt-1 hover:text-blue-700">{{ ux_icon('lucide:edit-2') }}</a>
+
+									<form method="post" action="{{ path('app_client_delete', {'id': client.id}) }}">
+										<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ client.id) }}">
+										<button class="btn text-red-500 hover:text-red-700">{{ ux_icon('lucide:trash-2') }}</button>
+									</form>
+
+								</td>
+							</tr>
+						{% else %}
+							<tr>
+								<td colspan="4">no records found</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+
+		</main>
+	</section>
+
+{% endblock %}

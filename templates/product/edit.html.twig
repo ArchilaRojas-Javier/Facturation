@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Product{% endblock %}
+
+{% block body %}
+    <section class="flex h-screen w-full">
+        <twig:AsideBar/>
+        <main class="flex flex-col w-full p-8 gap-6 text-gray-500 items-center justify-center">
+            <div class=' flex flex-col gap-6 '>    
+                {{ include('product/_form.html.twig', {'form_title': product.name,
+                 'form_label': 'Modifier le produit'}) }}
+            </div>
+        </main>
+    </section>
+{% endblock %}

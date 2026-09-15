@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Product{% endblock %}
+
+{% block body %}
+    <section class="flex h-screen w-full">
+        <twig:AsideBar/>
+        <main class="flex flex-col w-full p-8 gap-6 text-gray-500">
+          {# <twig:NewProduct /> #}
+          {{ component('NewProduct') }}
+        </main>
+    </section>
+{% endblock %}

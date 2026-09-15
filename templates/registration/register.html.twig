@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register
+{% endblock %}
+
+{% block body %}
+	<section class="h-screen flex items-center justify-center">
+		<div class="container max-w-md">
+
+			<div class="flex flex-col items-center justify-center mb-8">
+				<twig:ux:Icon name="lucide:receipt" class="w-16 h-16 mx-auto mb-4 text-[#155DFC]"/>
+				<h1 class="text-4xl font-bold text-center">Creez votre compte</h1>
+				<p>Ou<a href="{{ path('app_login') }}" class="text-blue-500 hover:underline">
+						connectez vous a votre compte.</a>
+				</p>
+
+			</div>
+
+			<div class='container-form w-full py-8 px-10 max-w-md bg-white border rounded-lg border-gray-200 shadow-md'>
+
+				{{ form_errors(registrationForm) }}
+				{{ form_start(registrationForm) }}
+
+				<div class='flex gap-1'>
+
+					<div class='flex flex-col w-1/2'>
+						{{ form_label(registrationForm.first_name) }}
+						{{ form_widget(registrationForm.first_name, {attr: {class: ' h-10 mb-4 border rounded-md border-gray-200'}}) }}
+						{{ form_errors(registrationForm.first_name) }}
+
+					</div>
+					<div class='flex flex-col w-1/2'>
+						{{ form_label(registrationForm.last_name) }}
+						{{ form_widget(registrationForm.last_name, {attr: {class: ' h-10 mb-4 border rounded-md border-gray-200 rounded-md'}}) }}
+						{{ form_errors(registrationForm.last_name) }}
+					</div>
+
+
+				</div>
+
+				{{ form_label(registrationForm.company_name) }}
+				{{ form_widget(registrationForm.company_name, {attr: {class: 'w-full h-10 mb-4 border rounded-md border-gray-200 rounded-md'}}) }}
+				{{ form_errors(registrationForm.company_name) }}
+
+				{{ form_label(registrationForm.iban) }}
+				{{ form_widget(registrationForm.iban, {attr: {class: 'w-full h-10 mb-4 border rounded-md border-gray-200 rounded-md'}}) }}
+				{{ form_errors(registrationForm.iban) }}
+
+				{{ form_label(registrationForm.email) }}
+				{{ form_widget(registrationForm.email, {attr: {class: 'w-full h-10 mb-4 border rounded-md border-gray-200 rounded-md'}}) }}
+				{{ form_errors(registrationForm.email) }}
+
+				{{ form_label(registrationForm.plainPassword, 'Mot de passe') }}
+				{{ form_widget(registrationForm.plainPassword, {attr: {class: 'w-full h-10 mb-4 border rounded-md border-gray-200 rounded-md'}}) }}
+
+				<button type="submit" class="btn bg-blue-500 text-white w-full h-10 rounded-md">Créer mon compte</button>
+
+				{{ form_end(registrationForm) }}
+			</div>
+		</div>
+	</section>
+
+
+{% endblock %}

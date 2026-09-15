@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Products
+{% endblock %}
+
+{% block body %}
+	<section class="flex h-screen w-full">
+
+		<twig:AsideBar/>
+
+		<main class="flex flex-col w-full p-8 gap-6 text-gray-500">
+            
+            <div class='flex max-w-full justify-between'>
+			    <h1 class='text-2xl font-bold text-black'>Produits & Services</h1>
+		        <button class='btn bg-blue-500 text-white h-10 p-2 rounded-md'>
+                <a href="{{ path('app_product_new') }}"> + Ajouter un produit</a>
+                </button>
+            </div>
+			<div class="border border-gray-200 rounded-md py-4 bg-white shadow-sm w-full overflow-x-auto"> 
+                <table class="table-auto w-full">
+                    <thead class='border-b border-gray-200'>
+                        <tr>
+                            <th class='px-4 py-2 text-left'>Nom</th>
+                            <th class='px-4 py-2 text-left'>Description</th>
+                            <th class='px-4 py-2 text-left'>Prix unitaire</th>
+                            <th class='px-4 py-2 text-left'>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in products %}
+                            <tr>
+                                <td class='px-4 py-2 align-middle'>{{ product.name }}</td>
+                                <td class='px-4 py-2 align-middle'>{{ product.description }}</td>
+                                <td class='px-4 py-2 align-middle'>{{ product.price }}€/{{ product.unit.value }}</td>
+                                
+                                <td class='flex gap-4 mt-1 px-4 py-2 align-middle whitespace-nowrap'>
+                                    <a href="{{ path('app_product_edit', {'id': product.id}) }}"
+                                     class="text-blue-500 mt-1 hover:text-blue-700">{{ ux_icon('lucide:edit-2') }}</a>
+                                    
+                                    <form method="post" action="{{ path('app_product_delete', {'id': product.id}) }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">
+                                    <button class="btn text-red-500 hover:text-red-700">{{ ux_icon('lucide:trash-2') }}</button>
+                                    </form>
+                                    
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="4">no records found</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+	    </main>
+    </section>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profile
+{% endblock %}
+
+{% block body %}
+	<section class='flex w-full h-screen'>
+		
+		<twig:AsideBar/>
+
+		<main class='flex w-full p-8 text-gray-500'>
+
+			<div class='flex flex-col'>
+				<h1 class='text-2xl font-bold text-black'>Mon Profil</h1>
+
+				<div class='bg-white p-6 rounded-md shadow-md w-full max-w-lg'>
+					{{ form_errors(form) }}
+					{{ form_start(form) }}
+
+					{{ form_label(form.company_name) }}
+					{{ form_widget(form.company_name, {attr: {class: 'w-full h-10 mb-1 border rounded-md border-gray-200 rounded-md'}}) }}
+					{{ form_errors(form.company_name) }}
+					<p class='text-sm text-gray-400 mb-4'>Le nom de votre entreprise tel qu'il apparaîtra sur vos factures.</p>
+
+					{{ form_label(form.siret) }}
+					{{ form_widget(form.siret, {attr: {class: 'w-full h-10 mb-4 border rounded-md border-gray-200 rounded-md'}}) }}
+					{{ form_errors(form.siret) }}
+
+					{{ form_label(form.iban) }}
+					{{ form_widget(form.iban, {attr: {class: 'w-full h-10 mb-1 border rounded-md border-gray-200 rounded-md'}}) }}
+					{{ form_errors(form.iban) }}
+					<p class='text-sm text-gray-400 mb-4'>Compte bancaire qui recevra les paiements de vos clients.</p>
+
+					<button type="submit" class="btn bg-blue-500 text-white h-10 p-2 rounded-md">Enregistrer les modifications</button>
+
+					{{ form_end(form) }}
+				</div>
+			</div>
+		</main>
+	</section>
+{% endblock %}

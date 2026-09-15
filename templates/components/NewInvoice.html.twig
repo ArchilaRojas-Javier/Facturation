@@ -1,0 +1,21 @@
+<div{{ attributes }}>
+    <!-- Modal para crear nuevo producto -->
+    <div>
+        {% if this.showProductForm %}
+            <div>
+                <twig:NewProduct :showList="false" />
+            </div>
+        {% endif %}
+    </div>
+	{{ form_start(this.formView, {
+            attr: { 'data-action': 'live#action:prevent',
+                    'data-live-action-param': 'saveInvoice'
+                    } }) 
+        }}
+		{{ include('invoice/_form.html.twig' ) }}
+		{{ form_end(this.formView) }}
+
+   
+
+    
+</div>
